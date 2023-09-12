@@ -1,29 +1,25 @@
-#include <iostream>
-#include <ctime>
-#include "Dijkstra.h" 
 using namespace std;
+#include "Dijkstra.h" 
 
 int main() {
-    // Load the Florida graph in DIMACS format
+    // Load the Florida graph in DIMACS format 
 
     const int numPairs = 200;
-    Dijkstra<GRAPH> dijkstra;
+    Dijkstra<GRAPH> forwardDijkstra; 
+    Dijkstra<GRAPH> backwardDijkstra; 
 
     double totalRuntime = 0.0;
-
     random_device rd;
     mt19937 gen(rd());
 
     for (int i = 0; i < numPairs; ++i) {
-         uniform_int_distribution<Vertex> vertexDistribution(0, );
         Vertex source = vertexDistribution(gen);
         Vertex destination = vertexDistribution(gen);
         
-        // Measure the runtime of Dijkstra's algorithm
+        // Measure the runtime of Bi-directional Search
         clock_t start = clock();
-        
-        // Call Dijkstra's algorithm
-        dijkstra.run(source, destination);
+         
+        runBidirectionalSearch(forwardDijkstra, backwardDijkstra, source, destination);
 
         clock_t end = clock();
         double runtime = static_cast<double>(end - start) / CLOCKS_PER_SEC;
@@ -32,16 +28,14 @@ int main() {
 
         // Example:
         cout << "Shortest Path from " << source << " to " << destination << " = ";
-        vector<Vertex> path = dijkstra.getPath(destination);
+        vector<Vertex> path = combinePaths(forwardDijkstra.getPath(destination), backwardDijkstra.getPath(source));
         for (Vertex vertex : path) {
             cout << vertex << " -> ";
         }
-        cout << "Distance = " << dijkstra.getDistance(destination) << endl;
+        cout << "Distance = " << calculateTotalDistance(path, forwardDijkstra, backwardDijkstra) << endl;
     }
 
-    // Print the total runtime for 200 random Dijkstra's algorithm runs
-    cout << "Total runtime in seconds for 200 random Dijkstra: " << totalRuntime << endl;
+    cout << "Total runtime in seconds for 200 random modified Dijkstra: " << totalRuntime << endl;
 
     return 0;
 }
-
